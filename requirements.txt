@@ -1,6 +1,6 @@
 Flask==2.2.5
 flask-sqlalchemy==3.1.1
 mysql-connector-python==9.0.0
-pandas==2.0.3
+pandas==2.1.4
 dashscope==1.20.6
-install numpy==1.21.0
+numpy==1.26.4
