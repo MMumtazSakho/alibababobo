@@ -23,8 +23,6 @@ db_config = {
     'port': 3306
 }
 
-db_connection = mysql.connector.connect(**db_config)
-cursor = db_connection.cursor()
 
 dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
 dashscope.api_key='sk-a1311b4902ae4d34bc944af0165b52e5'
@@ -102,14 +100,37 @@ def data_kuis(id_siswa):
 
 @app.route('/generate/<int:chapter_id>',methods=['POST'])
 def generate(chapter_id):
+    db_connection = mysql.connector.connect(**db_config)
+    cursor = db_connection.cursor()
     content = pd.read_sql_query(f"SELECT content FROM chapters WHERE chapter_id = {chapter_id}",db_connection)['content'][0]
     print(content)
     data = call_with_stream(content,10)
+    db_connection.close()
     return data
     
-    
+@app.route('/chapter_list/<int:course_id>', methods=['GET'])
+def chapter_list(course_id):
+    db_connection = mysql.connector.connect(**db_config)
+    cursor = db_connection.cursor()
+    try:
+        cursor = db_connection.cursor(dictionary=True)
+
+        query = "SELECT chapter_id, chapter_name, content FROM chapters WHERE course_id = %s"
+        cursor.execute(query, (course_id,))
+        chapters = cursor.fetchall()
+
+        if chapters:
+            return jsonify({'status': 'success', 'chapters': chapters}), 200
+        else:
+            return jsonify({'status': 'error', 'message': 'No chapters found for this course'}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({'status': 'error', 'message': str(err)}), 500
+
+    finally:
+        cursor.close()
+        db_connection.close()
 
 
 if __name__ == '__main__':
-    # app.run(debug=True, use_reloader=False, port=5000)
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
