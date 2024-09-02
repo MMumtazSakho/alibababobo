@@ -32,8 +32,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 db_config = {
     'user': 'hackathon',
-    'password': 'Kerb@um@sukp@rit',
-    'host': 'rm-6nna6j8tfzby3ay3vbo.mysql.rds.aliyuncs.com',  # contoh: 'rm-xxxx.mysql.rds.aliyuncs.com'
+    'password': '',
+    'host': '.mysql.rds.aliyuncs.com',  # contoh: 'rm-xxxx.mysql.rds.aliyuncs.com'
     'database': 'hackathon',
     'port': 3306
 }
@@ -89,7 +89,6 @@ def login():
             db_connection.close()
 
 dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
-dashscope.api_key='sk-a1311b4902ae4d34bc944af0165b52e5'
 
 def call_with_stream(materi, n_soal):
     messages = [
